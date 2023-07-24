@@ -40,8 +40,8 @@ public class timer {
 
 //        timer.schedule(task, 0);
 //        timer.schedule(task, date.getTime());
-//        timer.scheduleAtFixedRate(task, 0, 1000); // to get result immediately
-        timer.scheduleAtFixedRate(task, date.getTime(), 1000); // to get output at specific time
+        timer.scheduleAtFixedRate(task, 0, 1000); // to get result immediately
+//        timer.scheduleAtFixedRate(task, date.getTime(), 1000); // to get output at specific time
 
 
     }
