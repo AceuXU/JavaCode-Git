@@ -1,8 +1,5 @@
 public class Main {
     public static void main(String[] args) {
-
-        Stopwatch stopwatch = new Stopwatch();
-
-
+        MyFrame frame = new MyFrame();
     }
 }
