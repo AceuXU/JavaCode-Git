@@ -1,7 +1,17 @@
 package enumInJava;
 
 enum Planet {
-    MERCURY, VENUS, EARTH, MARS, JUPITER;
+    MERCURY(1),
+    VENUS(2),
+    EARTH(3),
+    MARS(4),
+    JUPITER(5);
+
+    int number;
+
+    Planet(int number) {
+        this.number = number;
+    }
 }
 
 public class Main {
@@ -15,9 +25,11 @@ public class Main {
         switch (myPlanet) {
             case MARS:
                 System.out.println("You can live here");
+                System.out.println("This is plant # " + myPlanet.number);
                 break;
             default:
                 System.out.println("You can't live here");
+                System.out.println("This is plant # " + myPlanet.number);
                 break;
 
         }
