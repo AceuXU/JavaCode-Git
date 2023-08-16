@@ -6,17 +6,18 @@ import java.awt.event.ActionListener;
 public class MyFrame extends JFrame {
 
     JButton button;
-    MyFrame(){
+
+    MyFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
-        this.setSize(500,500);
+        this.setSize(500, 500);
 
         button = new JButton();
-        button.setBounds(100,100,200,150);
+        button.setBounds(100, 100, 200, 150);
         button.setText("Button");
         button.addActionListener(e -> System.out.println("boom"));
         button.setFocusable(false);
-        button.setFont(new Font("Comic Sans",Font.BOLD,25));
+        button.setFont(new Font("Comic Sans", Font.BOLD, 25));
         button.setForeground(Color.cyan);
         button.setBackground(Color.BLACK);
         button.setBorder(BorderFactory.createEtchedBorder());

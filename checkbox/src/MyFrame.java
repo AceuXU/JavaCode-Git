@@ -31,7 +31,6 @@ public class MyFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==button){
             System.out.println(checkBox.isSelected());
-
         }
     }
 }
