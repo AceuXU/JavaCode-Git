@@ -22,7 +22,7 @@ public class Main {
         greenPanel.setLayout(new BorderLayout());
 
 
-        JFrame frame = new JFrame(); 
+        JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setSize(500, 500);
