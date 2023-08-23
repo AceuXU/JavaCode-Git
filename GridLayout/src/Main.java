@@ -26,7 +26,6 @@ public class Main {
         }
         ButtonClickListener buttonClickListener = new ButtonClickListener();
 
-
         frame.add(createButton("1", buttonClickListener));
         frame.add(createButton("2", buttonClickListener));
         frame.add(createButton("3", buttonClickListener));
@@ -37,15 +36,11 @@ public class Main {
         frame.add(createButton("8", buttonClickListener));
         frame.add(createButton("9", buttonClickListener));
 
-
-//        frame.add(new JButton("10")); // quick way to create button without creating instance
-
+        //        frame.add(new JButton("10")); // quick way to create button without creating instance
 
         frame.setVisible(true);
 
-
     }
-
     private static JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.addActionListener(listener);
