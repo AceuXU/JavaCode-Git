@@ -27,8 +27,6 @@ public class Main {
         ButtonClickListener buttonClickListener = new ButtonClickListener();
 
 
-
-
         frame.add(createButton("1", buttonClickListener));
         frame.add(createButton("2", buttonClickListener));
         frame.add(createButton("3", buttonClickListener));
