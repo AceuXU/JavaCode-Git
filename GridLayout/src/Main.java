@@ -12,6 +12,7 @@ public class Main {
         // and each cell is the same size.
 
         JFrame frame = new JFrame();
+        frame.setTitle("GridLayout");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
         frame.setLayout(new GridLayout(3, 3, 10, 10));
