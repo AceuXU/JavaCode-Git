@@ -1,5 +1,9 @@
 public class Main {
     public static void main(String[] args) {
+
+        // GUI
+        Gui gui = new Gui();
+
         Student student1 = new Student("Ratan", 1001,5);
         Student student2 = new Student("Anushka", 1002,4);
 
