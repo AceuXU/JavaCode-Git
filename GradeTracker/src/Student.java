@@ -1,14 +1,18 @@
-public class Student {
+import java.io.*;
+import java.util.*;
+
+public class Student implements Serializable {
     private String name;
     private int id;
-    private double[] grades;
+    private Map<String, Double> courseGrades;
 
-    // constructor
-    public Student(String name, int id, int numGrades) {
+    // Constructor
+    public Student(String name, int id) {
         this.name = name;
         this.id = id;
-        this.grades = new double[numGrades];
+        this.courseGrades = new HashMap<>();
     }
+
     // Setter and Getter for name
     public void setName(String name) {
         this.name = name;
@@ -28,37 +32,65 @@ public class Student {
     }
 
     // Setter for grades
-    public void setGrade(int index, double grade) {
-        if (index >= 0 && index < grades.length) {
-            grades[index] = grade;
-        } else {
-            System.out.println("Invalid Grade");
-        }
+    public void setGrade(String course, double grade) {
+        courseGrades.put(course, grade);
     }
-    // Getter for grades at a specific index
-    public double getGrade(int index) {
-        if (index >= 0 && index < grades.length) {
-            return grades[index];
+
+    // Get a grade for a specific course
+    public double getGrade(String course) {
+        if (courseGrades.containsKey(course)) {
+            return courseGrades.get(course);
         } else {
-            System.out.println("Invalid Grade Index");
+            System.out.println("Course not found");
             return -1; // or some default value
         }
     }
 
-    // Getter for the entire grades array
-    public double[] getGrades() {
-        return grades;
+    public Set<String> getCourseNames() {
+        return courseGrades.keySet();
     }
-    public double getAverageGrade(){
+
+    public double getAverageGrade() {
+        if (courseGrades.isEmpty()) {
+            return 0;
+        }
+
         double sum = 0;
-        for(double grade : grades){
+        for (double grade : courseGrades.values()) {
             sum += grade;
         }
-        return sum / grades.length;
+        return sum / courseGrades.size();
     }
-    public void displayStudentInfo(){
-        System.out.println("Name " + name);
+
+    // Save student data to a file
+    public static boolean saveToFile(Student student, String fileName) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            outputStream.writeObject(student);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Load student data from a file
+    public static Student loadFromFile(String fileName) {
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (Student) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Display student information
+    public void displayStudentInfo() {
+        System.out.println("Name: " + name);
         System.out.println("ID: " + id);
-        System.out.println("Average Grade " + getAverageGrade());
+        System.out.println("Average Grade: " + getAverageGrade());
+        System.out.println("Course Grades:");
+        for (Map.Entry<String, Double> entry : courseGrades.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
     }
 }

@@ -2,12 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 public class Gui extends JFrame {
     private JTextField nameTextField;
     private JTextField idTextField;
     private JTextField gradeTextField;
     private JTextArea textArea;
+    private Student student;
 
     public Gui() {
         super("Student Information"); // Set the window title
@@ -39,6 +41,24 @@ public class Gui extends JFrame {
             }
         });
 
+        // Create JButton to save data
+        JButton saveButton = new JButton("Save Data");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveData();
+            }
+        });
+
+        // Create JButton to load data
+        JButton loadButton = new JButton("Load Data");
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadData();
+            }
+        });
+
         // Add components to the panel
         panel.add(nameLabel);
         panel.add(nameTextField);
@@ -47,6 +67,8 @@ public class Gui extends JFrame {
         panel.add(gradeLabel);
         panel.add(gradeTextField);
         panel.add(addButton);
+        panel.add(saveButton);
+        panel.add(loadButton);
 
         // Add the panel and text area to the frame
         add(panel, BorderLayout.NORTH);
@@ -62,12 +84,12 @@ public class Gui extends JFrame {
         double grade = Double.parseDouble(gradeTextField.getText());
 
         // Create and display the student information
-        Student student = new Student(name, id, 1); // numGrades set to 1 for simplicity
-        student.setGrade(0, grade);
+        student = new Student(name, id);
+        student.setGrade("Course 1", grade); // Use a course name here
 
-        textArea.append("Name: " + student.getName());
-        textArea.append("ID: " + student.getId());
-        textArea.append("Grade: " + student.getGrade(0));
+        textArea.append("Name: " + student.getName() + "\n");
+        textArea.append("ID: " + student.getId() + "\n");
+        textArea.append("Course 1 Grade: " + student.getGrade("Course 1") + "\n");
 
         // Clear input fields
         nameTextField.setText("");
@@ -75,4 +97,35 @@ public class Gui extends JFrame {
         gradeTextField.setText("");
     }
 
+    private void saveData() {
+        if (student != null) {
+            String fileName = JOptionPane.showInputDialog(this, "Enter a filename to save data:");
+            if (fileName != null) {
+                if (Student.saveToFile(student, fileName)) {
+                    JOptionPane.showMessageDialog(this, "Data saved to " + fileName);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to save data.");
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No student data to save.");
+        }
+    }
+    private void loadData() {
+        String fileName = JOptionPane.showInputDialog(this, "Enter a filename to load data:");
+        if (fileName != null) {
+            student = Student.loadFromFile(fileName);
+            if (student != null) {
+                textArea.setText("Name: " + student.getName() + "\n");
+                textArea.append("ID: " + student.getId() + "\n");
+                // Display individual course grades here
+                for (String course : student.getCourseNames()) {
+                    textArea.append(course + " Grade: " + student.getGrade(course) + "\n");
+                }
+                JOptionPane.showMessageDialog(this, "Data loaded from " + fileName);
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to load data.");
+            }
+        }
+    }
 }
