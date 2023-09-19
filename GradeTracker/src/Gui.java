@@ -87,7 +87,7 @@ public class Gui extends JFrame {
             id = Integer.parseInt(idTextField.getText());
             grade = Double.parseDouble(gradeTextField.getText());
         } catch (NumberFormatException e) {
-            // Handle the error gracefully, e.g., show an error message
+            // added try and catch block to handle the error when user enters wrong data.
             JOptionPane.showMessageDialog(this, "Invalid input. Please enter valid numeric values for ID and Grade.");
             return; // Exit the method
         }
