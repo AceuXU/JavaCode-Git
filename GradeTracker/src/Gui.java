@@ -14,11 +14,11 @@ public class Gui extends JFrame {
     public Gui() {
         super("Student Information"); // Set the window title
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(600, 500);
 
         // Create a JPanel to hold components
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 2));
+        panel.setLayout(new GridLayout(0, 1));
 
         // Create JLabels and JTextFields for student information
         JLabel nameLabel = new JLabel("Name:");
@@ -80,8 +80,17 @@ public class Gui extends JFrame {
 
     private void addStudent() {
         String name = nameTextField.getText();
-        int id = Integer.parseInt(idTextField.getText());
-        double grade = Double.parseDouble(gradeTextField.getText());
+        int id;
+        double grade;
+
+        try {
+            id = Integer.parseInt(idTextField.getText());
+            grade = Double.parseDouble(gradeTextField.getText());
+        } catch (NumberFormatException e) {
+            // Handle the error gracefully, e.g., show an error message
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter valid numeric values for ID and Grade.");
+            return; // Exit the method
+        }
 
         // Create and display the student information
         student = new Student(name, id);
