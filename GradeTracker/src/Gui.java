@@ -15,49 +15,73 @@ public class Gui extends JFrame {
         super("Student Information"); // Set the window title
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 500);
+        setResizable(true);
 
         // Create a JPanel to hold components
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 1));
+        Color darkColor = new Color(25, 25, 25); // RGB value for dark color
 
         // Create JLabels and JTextFields for student information
         JLabel nameLabel = new JLabel("Name:");
         nameTextField = new JTextField(20);
+        nameLabel.setForeground(Color.white);
+        nameTextField.setBackground(Color.darkGray);
+
+
         JLabel idLabel = new JLabel("ID:");
         idTextField = new JTextField(10);
+        idLabel.setForeground(Color.white);
+        idTextField.setBackground(Color.darkGray);
+
         JLabel gradeLabel = new JLabel("Grade:");
         gradeTextField = new JTextField(5);
+        gradeLabel.setForeground(Color.white);
+        gradeTextField.setBackground(Color.darkGray);
 
         // Create a JTextArea for displaying student information
         textArea = new JTextArea(10, 30);
+        textArea.setBackground(darkColor);
         textArea.setEditable(false);
 
-        // Create a JButton to add students and display information
         JButton addButton = new JButton("Add Student");
+        JButton saveButton = new JButton("Save Data");
+        JButton loadButton = new JButton("Load Data");
+
+        // background color for buttons
+        addButton.setBackground(Color.WHITE);
+        saveButton.setBackground(Color.WHITE);
+        loadButton.setBackground(Color.WHITE);
+
+        // foreground (text) color for buttons
+        addButton.setForeground(Color.darkGray);
+        saveButton.setForeground(Color.darkGray);
+        loadButton.setForeground(Color.darkGray);
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addStudent();
             }
         });
-
-        // Create JButton to save data
-        JButton saveButton = new JButton("Save Data");
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveData();
             }
         });
-
-        // Create JButton to load data
-        JButton loadButton = new JButton("Load Data");
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadData();
             }
         });
+
+        // empty panels for spacing
+        JPanel space1 = new JPanel();
+        JPanel space2 = new JPanel();
+        space1.setPreferredSize(new Dimension(10, 10)); // Adjust the size as needed
+        space2.setPreferredSize(new Dimension(10, 10));
 
         // Add components to the panel
         panel.add(nameLabel);
@@ -69,6 +93,9 @@ public class Gui extends JFrame {
         panel.add(addButton);
         panel.add(saveButton);
         panel.add(loadButton);
+        panel.add(space1);
+        panel.add(space2);
+        panel.setBackground(darkColor);
 
         // Add the panel and text area to the frame
         add(panel, BorderLayout.NORTH);
@@ -120,6 +147,7 @@ public class Gui extends JFrame {
             JOptionPane.showMessageDialog(this, "No student data to save.");
         }
     }
+
     private void loadData() {
         String fileName = JOptionPane.showInputDialog(this, "Enter a filename to load data:");
         if (fileName != null) {
