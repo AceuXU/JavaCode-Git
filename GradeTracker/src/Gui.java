@@ -27,17 +27,26 @@ public class Gui extends JFrame {
         nameTextField = new JTextField(20);
         nameLabel.setForeground(Color.white);
         nameTextField.setBackground(Color.darkGray);
+        nameTextField.setForeground(Color.white);
 
 
         JLabel idLabel = new JLabel("ID:");
         idTextField = new JTextField(10);
         idLabel.setForeground(Color.white);
         idTextField.setBackground(Color.darkGray);
+        idTextField.setForeground(Color.white);
 
         JLabel gradeLabel = new JLabel("Grade:");
         gradeTextField = new JTextField(5);
         gradeLabel.setForeground(Color.white);
         gradeTextField.setBackground(Color.darkGray);
+        gradeTextField.setForeground(Color.white);
+
+        // changing of fonts
+        Font timesNewRoman = new Font("Montserrat", Font.PLAIN, 15);
+        nameTextField.setFont(timesNewRoman);
+        idTextField.setFont(timesNewRoman);
+        gradeTextField.setFont(timesNewRoman);
 
         // Create a JTextArea for displaying student information
         textArea = new JTextArea(10, 30);
