@@ -58,17 +58,24 @@ public class Gui extends JFrame {
         JButton addButton = new JButton("Add Student");
         JButton saveButton = new JButton("Save Data");
         JButton loadButton = new JButton("Load Data");
+        JButton editButton = new JButton("Edit");
+        JButton deleteButton = new JButton("Delete");
 
         // background color for buttons
         addButton.setBackground(Color.WHITE);
         saveButton.setBackground(Color.WHITE);
         loadButton.setBackground(Color.WHITE);
+        editButton.setBackground(Color.WHITE);
+        deleteButton.setBackground(Color.WHITE);
 
         // foreground (text) color for buttons
         addButton.setForeground(Color.darkGray);
         saveButton.setForeground(Color.darkGray);
         loadButton.setForeground(Color.darkGray);
+        editButton.setForeground(Color.darkGray);
+        deleteButton.setForeground(Color.darkGray);
 
+        // Action lister for buttons -----
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,6 +94,20 @@ public class Gui extends JFrame {
                 loadData();
             }
         });
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editStudent();
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteStudent();
+            }
+        });
+
 
         // empty panels for spacing
         JPanel space1 = new JPanel();
@@ -104,6 +125,8 @@ public class Gui extends JFrame {
         panel.add(addButton);
         panel.add(saveButton);
         panel.add(loadButton);
+        panel.add(editButton);
+        panel.add(deleteButton);
         panel.setBackground(darkColor);
 
         // Add the panel and text area to the frame
@@ -114,6 +137,7 @@ public class Gui extends JFrame {
         setVisible(true);
     }
 
+    // method for adding student
     private void addStudent() {
         String name = nameTextField.getText();
         int id;
@@ -142,6 +166,7 @@ public class Gui extends JFrame {
         gradeTextField.setText("");
     }
 
+    // method for saving information
     private void saveData() {
         if (student != null) {
             String fileName = JOptionPane.showInputDialog(this, "Enter a filename to save data:");
@@ -157,6 +182,7 @@ public class Gui extends JFrame {
         }
     }
 
+    // method for loading saved data/info
     private void loadData() {
         String fileName = JOptionPane.showInputDialog(this, "Enter a filename to load data:");
         if (fileName != null) {
@@ -172,6 +198,53 @@ public class Gui extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to load data.");
             }
+        }
+    }
+
+    // method for editing student information
+    private void editStudent() {
+        String name = nameTextField.getText();
+        int id;
+        double grade;
+
+        try {
+            id = Integer.parseInt(idTextField.getText());
+            grade = Double.parseDouble(gradeTextField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter valid numeric values for ID and Grade.");
+            return;
+        }
+
+        if (student != null) {
+            student.setName(name);
+            student.setId(id);
+            student.setGrade("Course 1", grade);
+
+            textArea.setText("Name: " + student.getName() + "\n");
+            textArea.append("ID: " + student.getId() + "\n");
+            textArea.append("Course 1 Grade: " + student.getGrade("Course 1") + "\n");
+
+            nameTextField.setText("");
+            idTextField.setText("");
+            gradeTextField.setText("");
+
+            JOptionPane.showMessageDialog(this, "Student data updated.");
+        } else {
+            JOptionPane.showMessageDialog(this, "No student data to edit.");
+        }
+    }
+
+    // method for deleting student information/data
+    private void deleteStudent() {
+        if (student != null) {
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this student?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                student = null; // Delete the student record
+                textArea.setText(""); // Clear the text area
+                JOptionPane.showMessageDialog(this, "Student data deleted.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No student data to delete.");
         }
     }
 }
