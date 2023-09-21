@@ -14,7 +14,7 @@ public class Gui extends JFrame {
     public Gui() {
         super("Student Information"); // Set the window title
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 500);
+        setSize(600, 600);
         setResizable(true);
 
         // Create a JPanel to hold components
@@ -42,16 +42,18 @@ public class Gui extends JFrame {
         gradeTextField.setBackground(Color.darkGray);
         gradeTextField.setForeground(Color.white);
 
-        // changing of fonts
-        Font timesNewRoman = new Font("Montserrat", Font.PLAIN, 15);
-        nameTextField.setFont(timesNewRoman);
-        idTextField.setFont(timesNewRoman);
-        gradeTextField.setFont(timesNewRoman);
-
         // Create a JTextArea for displaying student information
-        textArea = new JTextArea(10, 30);
+        textArea = new JTextArea(15, 30);
         textArea.setBackground(darkColor);
+        textArea.setForeground(Color.white);
         textArea.setEditable(false);
+
+        // changing of fonts
+        Font font = new Font("Montserrat", Font.PLAIN, 15);
+        nameTextField.setFont(font);
+        idTextField.setFont(font);
+        gradeTextField.setFont(font);
+        textArea.setFont(font);
 
         JButton addButton = new JButton("Add Student");
         JButton saveButton = new JButton("Save Data");
@@ -89,8 +91,8 @@ public class Gui extends JFrame {
         // empty panels for spacing
         JPanel space1 = new JPanel();
         JPanel space2 = new JPanel();
-        space1.setPreferredSize(new Dimension(10, 10)); // Adjust the size as needed
-        space2.setPreferredSize(new Dimension(10, 10));
+        space1.setPreferredSize(new Dimension(2, 2)); // Adjust the size as needed
+        space2.setPreferredSize(new Dimension(4, 4));
 
         // Add components to the panel
         panel.add(nameLabel);
@@ -102,8 +104,6 @@ public class Gui extends JFrame {
         panel.add(addButton);
         panel.add(saveButton);
         panel.add(loadButton);
-        panel.add(space1);
-        panel.add(space2);
         panel.setBackground(darkColor);
 
         // Add the panel and text area to the frame
