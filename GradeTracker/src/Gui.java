@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Set;
 
 public class Gui extends JFrame {
@@ -110,10 +112,10 @@ public class Gui extends JFrame {
 
 
         // empty panels for spacing
-        JPanel space1 = new JPanel();
-        JPanel space2 = new JPanel();
-        space1.setPreferredSize(new Dimension(2, 2)); // Adjust the size as needed
-        space2.setPreferredSize(new Dimension(4, 4));
+//        JPanel space1 = new JPanel();
+//        JPanel space2 = new JPanel();
+//        space1.setPreferredSize(new Dimension(2, 2)); // Adjust the size as needed
+//        space2.setPreferredSize(new Dimension(4, 4));
 
         // Add components to the panel
         panel.add(nameLabel);
@@ -133,8 +135,56 @@ public class Gui extends JFrame {
         add(panel, BorderLayout.NORTH);
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        // Make the frame visible
-        setVisible(true);
+
+        setKeyboardShortcuts(); // for keyboard shortcuts
+        setVisible(true); // to make frame visible
+
+    }
+
+    // Method to set up keyboard shortcuts
+    private void setKeyboardShortcuts() {
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getRootPane().getActionMap();
+
+        // Ctrl+A keyboard shortcut for Add
+        KeyStroke addKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(addKeyStroke, "addStudentAction");
+        actionMap.put("addStudentAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addStudent();
+            }
+        });
+
+        // Ctrl+S for Save
+        KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(saveKeyStroke, "performSaveAction");
+        actionMap.put("performSaveAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveData();
+            }
+        });
+
+        // Ctrl+E for Edit
+        KeyStroke editKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(editKeyStroke, "performEditAction");
+        actionMap.put("performEditAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editStudent();
+            }
+        });
+
+        // Ctrl+D for Delete
+        KeyStroke deleteKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(deleteKeyStroke, "performDeleteAction");
+        actionMap.put("performDeleteAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteStudent();
+            }
+        });
     }
 
     // method for adding student
