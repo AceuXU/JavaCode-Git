@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,9 +13,14 @@ public class Gui extends JFrame {
     private JTextField gradeTextField;
     private JTextArea textArea;
     private Student student;
+    private DefaultTableModel tableModel;
+    private JTable studentTable;
+    private JTextField searchField;
+    private JButton searchButton;
+
 
     public Gui() {
-        super("Student Information"); // Set the window title
+        super("Grade Management"); // Set the window title
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 600);
         setResizable(true);
@@ -110,12 +116,29 @@ public class Gui extends JFrame {
             }
         });
 
+        // constructor
+        studentTable = new JTable(tableModel);
 
-        // empty panels for spacing
-//        JPanel space1 = new JPanel();
-//        JPanel space2 = new JPanel();
-//        space1.setPreferredSize(new Dimension(2, 2)); // Adjust the size as needed
-//        space2.setPreferredSize(new Dimension(4, 4));
+        // Initialized tableModel
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Name");
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Course 1 Grade");
+
+        // Add the search field and button
+        searchField = new JTextField(20);
+        searchButton = new JButton("Search");
+
+        searchField.setFont(font);
+        searchField.setForeground(Color.darkGray);
+        searchField.setBackground(Color.white);
+
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchStudents();
+            }
+        });
 
         // Add components to the panel
         panel.add(nameLabel);
@@ -124,11 +147,16 @@ public class Gui extends JFrame {
         panel.add(idTextField);
         panel.add(gradeLabel);
         panel.add(gradeTextField);
+
+        // buttons to panel
         panel.add(addButton);
         panel.add(saveButton);
         panel.add(loadButton);
         panel.add(editButton);
         panel.add(deleteButton);
+        panel.add(searchField);
+        panel.add(searchButton);
+
         panel.setBackground(darkColor);
 
         // Add the panel and text area to the frame
@@ -140,6 +168,34 @@ public class Gui extends JFrame {
         setVisible(true); // to make frame visible
 
     }
+    private void searchStudents() {
+        String query = searchField.getText().trim().toLowerCase();
+
+        // Create a new table model to store the filtered data
+        DefaultTableModel filteredModel = new DefaultTableModel();
+        filteredModel.addColumn("Name");
+        filteredModel.addColumn("ID");
+        filteredModel.addColumn("Course 1 Grade");
+
+        // Iterate through the student data and add matching records to the filtered model
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String name = tableModel.getValueAt(i, 0).toString().toLowerCase();
+            String id = tableModel.getValueAt(i, 1).toString().toLowerCase();
+
+            if (name.contains(query) || id.contains(query)) {
+                Object[] rowData = {
+                        tableModel.getValueAt(i, 0),
+                        tableModel.getValueAt(i, 1),
+                        tableModel.getValueAt(i, 2)
+                };
+                filteredModel.addRow(rowData);
+            }
+        }
+
+        // Update the student table with the filtered data
+        studentTable.setModel(filteredModel);
+    }
+
 
     // Method to set up keyboard shortcuts
     private void setKeyboardShortcuts() {
