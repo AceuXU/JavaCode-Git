@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Gui extends JFrame {
@@ -17,6 +18,25 @@ public class Gui extends JFrame {
     private JTable studentTable;
     private JTextField searchField;
     private JButton searchButton;
+    private ArrayList<Course> courses;
+    private JButton addCourseButton;
+
+    public class Course {
+        private String name;
+
+        public Course(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
 
 
     public Gui() {
@@ -139,6 +159,24 @@ public class Gui extends JFrame {
                 searchStudents();
             }
         });
+        // Initialize courses ArrayList
+        courses = new ArrayList<>();
+
+        // Initialize studentTable with tableModel
+        studentTable = new JTable(tableModel);
+
+        // Initialize addCourseButton
+        addCourseButton = new JButton("Add Course");
+        addCourseButton.setBackground(Color.WHITE);
+        addCourseButton.setForeground(Color.darkGray);
+
+        addCourseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addCourse();
+            }
+        });
+
 
         // Add components to the panel
         panel.add(nameLabel);
@@ -156,6 +194,7 @@ public class Gui extends JFrame {
         panel.add(deleteButton);
         panel.add(searchField);
         panel.add(searchButton);
+        panel.add(addCourseButton); // for course selection
 
         panel.setBackground(darkColor);
 
@@ -168,6 +207,7 @@ public class Gui extends JFrame {
         setVisible(true); // to make frame visible
 
     }
+
     private void searchStudents() {
         String query = searchField.getText().trim().toLowerCase();
 
@@ -353,4 +393,13 @@ public class Gui extends JFrame {
             JOptionPane.showMessageDialog(this, "No student data to delete.");
         }
     }
-}
+
+    private void addCourse() {
+            String courseName = JOptionPane.showInputDialog(this, "Enter course name:");
+            if (courseName != null && !courseName.isEmpty()) {
+                Course course = new Course(courseName); // Create a Course object with only the name
+                courses.add(course);
+
+            }
+        }
+    }
