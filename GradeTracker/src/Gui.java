@@ -20,6 +20,8 @@ public class Gui extends JFrame {
     private JButton searchButton;
     private ArrayList<Course> courses;
     private JButton addCourseButton;
+    private JButton calculateGpaButton;
+
 
     public class Course {
         private String name;
@@ -69,6 +71,31 @@ public class Gui extends JFrame {
         gradeLabel.setForeground(Color.white);
         gradeTextField.setBackground(Color.darkGray);
         gradeTextField.setForeground(Color.white);
+
+        // Create and configure the Calculate GPA button
+        calculateGpaButton = new JButton("Calculate GPA");
+        calculateGpaButton.setBackground(Color.WHITE);
+        calculateGpaButton.setForeground(Color.darkGray);
+        calculateGpaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Check if a student is currently loaded
+                if (student != null) {
+                    // Calculate GPA
+                    double gpa = calculateGPA(student);
+
+                    if (courses.isEmpty()) {
+                        JOptionPane.showMessageDialog(Gui.this, "No courses added. GPA cannot be calculated.");
+                    } else {
+                        // Display GPA in the text area
+                        textArea.append("GPA: " + gpa + "\n");
+                    }
+                } else {
+                    // Display an error message if no student data is available
+                    JOptionPane.showMessageDialog(Gui.this, "No student data to calculate GPA for.");
+            }
+        }
+        });
 
         // Create a JTextArea for displaying student information
         textArea = new JTextArea(15, 30);
@@ -136,14 +163,14 @@ public class Gui extends JFrame {
             }
         });
 
-        // constructor
-        studentTable = new JTable(tableModel);
-
         // Initialized tableModel
         tableModel = new DefaultTableModel();
         tableModel.addColumn("Name");
         tableModel.addColumn("ID");
         tableModel.addColumn("Course 1 Grade");
+
+        // constructor
+        studentTable = new JTable(tableModel);
 
         // Add the search field and button
         searchField = new JTextField(20);
@@ -195,6 +222,7 @@ public class Gui extends JFrame {
         panel.add(searchField);
         panel.add(searchButton);
         panel.add(addCourseButton); // for course selection
+        panel.add(calculateGpaButton); // gpa button
 
         panel.setBackground(darkColor);
 
@@ -395,11 +423,49 @@ public class Gui extends JFrame {
     }
 
     private void addCourse() {
-            String courseName = JOptionPane.showInputDialog(this, "Enter course name:");
-            if (courseName != null && !courseName.isEmpty()) {
-                Course course = new Course(courseName); // Create a Course object with only the name
-                courses.add(course);
+        String courseName = JOptionPane.showInputDialog(this, "Enter course name:");
+        if (courseName != null && !courseName.isEmpty()) {
+            Course course = new Course(courseName); // Create a Course object with only the name
+            courses.add(course);
 
-            }
         }
     }
+
+    // Method to calculate GPA for a student
+    private double calculateGPA(Student student) {
+        if (student == null) {
+            return 0.0;
+        }
+
+        double totalGradePoints = 0.0;
+        double totalCredits = 0.0;
+
+        for (Course course : courses) {
+            double grade = student.getGrade(course.getName());
+            if (grade >= 0) {
+                totalGradePoints += grade; // Assuming each course has a credit value of 1
+                totalCredits += 1.0;
+            }
+        }
+
+        if (totalCredits > 0) {
+            return totalGradePoints / totalCredits;
+        } else {
+            return 0.0; // Return 0 GPA if no valid grades or credits are found
+        }
+    }
+
+    private double calculateGradePoints(String grade) {
+        switch (grade) {
+            case "A":
+                return 4.0;
+            case "A-":
+                return 3.7;
+            case "B+":
+                return 3.3;
+            // Add more cases for other grades
+            default:
+                return 0.0; // Treat unrecognized grades as 0.0
+        }
+    }
+}
