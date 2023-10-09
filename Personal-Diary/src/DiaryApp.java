@@ -2,18 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 
 public class DiaryApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new DiaryFrame("My Personal Diary");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(500, 500);
+            frame.setSize(400, 300);
             frame.setVisible(true);
         });
     }
@@ -21,9 +20,11 @@ public class DiaryApp {
 
 class DiaryFrame extends JFrame {
     private JTextArea diaryTextArea;
+    private List<String> diaryEntries;
+    private int currentEntryIndex;
 
-    public DiaryFrame(String title) {
-        super(title);
+    public DiaryFrame(String diaryApp) {
+        super(diaryApp);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -37,8 +38,19 @@ class DiaryFrame extends JFrame {
         JButton saveButton = new JButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
 
+        JButton prevButton = new JButton("Previous Entry");
+        prevButton.addActionListener(new PrevButtonListener());
+
+        JButton nextButton = new JButton("Next Entry");
+        nextButton.addActionListener(new NextButtonListener());
+
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(saveButton, BorderLayout.SOUTH);
+        panel.add(prevButton, BorderLayout.WEST);
+        panel.add(nextButton, BorderLayout.EAST);
+
+        diaryEntries = new ArrayList<>();
+        currentEntryIndex = -1;
 
         this.add(panel);
     }
@@ -50,20 +62,44 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    private class PrevButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            navigateToPreviousEntry();
+        }
+    }
+
+    private class NextButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            navigateToNextEntry();
+        }
+    }
+
     private void saveDiaryEntry() {
         String entry = diaryTextArea.getText();
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        try (FileWriter writer = new FileWriter("diary.txt", true)) {
-            writer.write("Date/Time: " + timestamp + "\n");
-            writer.write(entry + "\n");
-            writer.write("---------------------------------\n");
-            writer.close();
-            JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        if (!entry.trim().isEmpty()) {
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            diaryEntries.add("Date/Time: " + timestamp + "\n" + entry);
+            currentEntryIndex = diaryEntries.size() - 1;
             diaryTextArea.setText("");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving entry!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please enter an entry before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void navigateToPreviousEntry() {
+        if (currentEntryIndex > 0) {
+            currentEntryIndex--;
+            diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+        }
+    }
+
+    private void navigateToNextEntry() {
+        if (currentEntryIndex < diaryEntries.size() - 1) {
+            currentEntryIndex++;
+            diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
         }
     }
 }
