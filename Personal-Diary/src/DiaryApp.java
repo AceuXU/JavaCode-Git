@@ -35,6 +35,8 @@ class DiaryFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(diaryTextArea);
 
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+
         JButton saveButton = new JButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
 
@@ -44,10 +46,12 @@ class DiaryFrame extends JFrame {
         JButton nextButton = new JButton("Next Entry");
         nextButton.addActionListener(new NextButtonListener());
 
+        buttonPanel.add(saveButton);
+        buttonPanel.add(prevButton);
+        buttonPanel.add(nextButton);
+
         panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(saveButton, BorderLayout.SOUTH);
-        panel.add(prevButton, BorderLayout.WEST);
-        panel.add(nextButton, BorderLayout.EAST);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         diaryEntries = new ArrayList<>();
         currentEntryIndex = -1;
