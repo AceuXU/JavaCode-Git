@@ -40,6 +40,12 @@ class DiaryFrame extends JFrame {
         JButton saveButton = new JButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
 
+        JButton editButton = new JButton("Edit Entry");
+        editButton.addActionListener(new EditButtonListener());
+
+        JButton deleteButton = new JButton("Delete Entry");
+        deleteButton.addActionListener(new DeleteButtonListener());
+
         JButton prevButton = new JButton("Previous Entry");
         prevButton.addActionListener(new PrevButtonListener());
 
@@ -47,6 +53,8 @@ class DiaryFrame extends JFrame {
         nextButton.addActionListener(new NextButtonListener());
 
         buttonPanel.add(saveButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
 
@@ -63,6 +71,20 @@ class DiaryFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             saveDiaryEntry();
+        }
+    }
+
+    private class EditButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            editDiaryEntry();
+        }
+    }
+
+    private class DeleteButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            deleteDiaryEntry();
         }
     }
 
@@ -90,6 +112,36 @@ class DiaryFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Please enter an entry before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void editDiaryEntry() {
+        String entry = diaryTextArea.getText();
+        if (!entry.trim().isEmpty() && currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            String editedEntry = "Date/Time: " + timestamp + "\n" + entry;
+            diaryEntries.set(currentEntryIndex, editedEntry);
+            diaryTextArea.setText(editedEntry); // Update the displayed text
+            JOptionPane.showMessageDialog(this, "Entry edited successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an entry to edit.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void deleteDiaryEntry() {
+        if (currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
+            diaryEntries.remove(currentEntryIndex);
+            if (diaryEntries.isEmpty()) {
+                diaryTextArea.setText("");
+            } else {
+                if (currentEntryIndex >= diaryEntries.size()) {
+                    currentEntryIndex = diaryEntries.size() - 1;
+                }
+                diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+            }
+            JOptionPane.showMessageDialog(this, "Entry deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an entry to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
