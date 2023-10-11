@@ -12,7 +12,7 @@ public class DiaryApp {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new DiaryFrame("My Personal Diary");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 300);
+            frame.setSize(500, 500);
             frame.setVisible(true);
         });
     }
@@ -22,11 +22,13 @@ class DiaryFrame extends JFrame {
     private JTextArea diaryTextArea;
     private List<String> diaryEntries;
     private int currentEntryIndex;
+    private boolean isDarkMode;
+    private JPanel panel;
 
     public DiaryFrame(String diaryApp) {
         super(diaryApp);
 
-        JPanel panel = new JPanel();
+        panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
         diaryTextArea = new JTextArea();
@@ -52,9 +54,13 @@ class DiaryFrame extends JFrame {
         JButton nextButton = new JButton("Next Entry");
         nextButton.addActionListener(new NextButtonListener());
 
+        JButton darkModeButton = new JButton("Dark Mode");
+        darkModeButton.addActionListener(new DarkModeButtonListener());
+
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(darkModeButton);
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
 
@@ -63,6 +69,7 @@ class DiaryFrame extends JFrame {
 
         diaryEntries = new ArrayList<>();
         currentEntryIndex = -1;
+        isDarkMode = false;
 
         this.add(panel);
     }
@@ -99,6 +106,13 @@ class DiaryFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             navigateToNextEntry();
+        }
+    }
+
+    private class DarkModeButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            toggleDarkMode();
         }
     }
 
@@ -156,6 +170,24 @@ class DiaryFrame extends JFrame {
         if (currentEntryIndex < diaryEntries.size() - 1) {
             currentEntryIndex++;
             diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+        }
+    }
+    private void toggleDarkMode(){
+        isDarkMode = !isDarkMode;
+
+        if (isDarkMode) {
+            // Set dark mode colors
+            panel.setBackground(Color.BLACK);
+            diaryTextArea.setBackground(Color.DARK_GRAY);
+            diaryTextArea.setForeground(Color.WHITE);
+            // Set other components' colors accordingly
+            // You can also change button colors, text colors, etc.
+        } else {
+            // Revert to light mode colors
+            panel.setBackground(Color.WHITE);
+            diaryTextArea.setBackground(Color.WHITE);
+            diaryTextArea.setForeground(Color.BLACK);
+            // Revert other components' colors
         }
     }
 }
