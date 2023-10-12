@@ -24,6 +24,7 @@ class DiaryFrame extends JFrame {
     private int currentEntryIndex;
     private boolean isDarkMode;
     private JPanel panel;
+    private Font customFont;
 
     public DiaryFrame(String diaryApp) {
         super(diaryApp);
@@ -31,9 +32,12 @@ class DiaryFrame extends JFrame {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
+        customFont = new Font("Times New Roman", Font.BOLD, 20);
+
         diaryTextArea = new JTextArea();
         diaryTextArea.setLineWrap(true);
         diaryTextArea.setWrapStyleWord(true);
+        diaryTextArea.setFont(customFont);
 
         JScrollPane scrollPane = new JScrollPane(diaryTextArea);
 
