@@ -57,12 +57,15 @@ class DiaryFrame extends JFrame {
         JButton darkModeButton = new JButton("Dark Mode");
         darkModeButton.addActionListener(new DarkModeButtonListener());
 
+        JButton emojiButton = new JButton("✔");
+
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(darkModeButton);
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
+        buttonPanel.add(emojiButton);
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -116,78 +119,91 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    private void saveDiaryEntry() {
-        String entry = diaryTextArea.getText();
-        if (!entry.trim().isEmpty()) {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            diaryEntries.add("Date/Time: " + timestamp + "\n" + entry);
-            currentEntryIndex = diaryEntries.size() - 1;
-            diaryTextArea.setText("");
-            JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Please enter an entry before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
+    private class EmoticonButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            insertEmoji("😊");
         }
     }
 
-    private void editDiaryEntry() {
-        String entry = diaryTextArea.getText();
-        if (!entry.trim().isEmpty() && currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            String editedEntry = "Date/Time: " + timestamp + "\n" + entry;
-            diaryEntries.set(currentEntryIndex, editedEntry);
-            diaryTextArea.setText(editedEntry); // Update the displayed text
-            JOptionPane.showMessageDialog(this, "Entry edited successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an entry to edit.", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    private void deleteDiaryEntry() {
-        if (currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
-            diaryEntries.remove(currentEntryIndex);
-            if (diaryEntries.isEmpty()) {
-                diaryTextArea.setText("");
-            } else {
-                if (currentEntryIndex >= diaryEntries.size()) {
+            private void saveDiaryEntry () {
+                String entry = diaryTextArea.getText();
+                if (!entry.trim().isEmpty()) {
+                    String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    diaryEntries.add("Date/Time: " + timestamp + "\n" + entry);
                     currentEntryIndex = diaryEntries.size() - 1;
+                    diaryTextArea.setText("");
+                    JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please enter an entry before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
-                diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
             }
-            JOptionPane.showMessageDialog(this, "Entry deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an entry to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }
 
-    private void navigateToPreviousEntry() {
-        if (currentEntryIndex > 0) {
-            currentEntryIndex--;
-            diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
-        }
-    }
+            private void editDiaryEntry () {
+                String entry = diaryTextArea.getText();
+                if (!entry.trim().isEmpty() && currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
+                    String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    String editedEntry = "Date/Time: " + timestamp + "\n" + entry;
+                    diaryEntries.set(currentEntryIndex, editedEntry);
+                    diaryTextArea.setText(editedEntry); // Update the displayed text
+                    JOptionPane.showMessageDialog(this, "Entry edited successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please select an entry to edit.", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
 
-    private void navigateToNextEntry() {
-        if (currentEntryIndex < diaryEntries.size() - 1) {
-            currentEntryIndex++;
-            diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
-        }
-    }
-    private void toggleDarkMode(){
-        isDarkMode = !isDarkMode;
+            private void deleteDiaryEntry () {
+                if (currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
+                    diaryEntries.remove(currentEntryIndex);
+                    if (diaryEntries.isEmpty()) {
+                        diaryTextArea.setText("");
+                    } else {
+                        if (currentEntryIndex >= diaryEntries.size()) {
+                            currentEntryIndex = diaryEntries.size() - 1;
+                        }
+                        diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+                    }
+                    JOptionPane.showMessageDialog(this, "Entry deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please select an entry to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
 
-        if (isDarkMode) {
-            // Set dark mode colors
-            panel.setBackground(Color.BLACK);
-            diaryTextArea.setBackground(Color.DARK_GRAY);
-            diaryTextArea.setForeground(Color.WHITE);
-            // Set other components' colors accordingly
-            // You can also change button colors, text colors, etc.
-        } else {
-            // Revert to light mode colors
-            panel.setBackground(Color.WHITE);
-            diaryTextArea.setBackground(Color.WHITE);
-            diaryTextArea.setForeground(Color.BLACK);
-            // Revert other components' colors
+            private void navigateToPreviousEntry () {
+                if (currentEntryIndex > 0) {
+                    currentEntryIndex--;
+                    diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+                }
+            }
+
+            private void navigateToNextEntry () {
+                if (currentEntryIndex < diaryEntries.size() - 1) {
+                    currentEntryIndex++;
+                    diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+                }
+            }
+            private void toggleDarkMode () {
+                isDarkMode = !isDarkMode;
+
+                if (isDarkMode) {
+                    // Set dark mode colors
+                    panel.setBackground(Color.BLACK);
+                    diaryTextArea.setBackground(Color.DARK_GRAY);
+                    diaryTextArea.setForeground(Color.WHITE);
+                    // Set other components' colors accordingly
+                    // You can also change button colors, text colors, etc.
+                } else {
+                    // Revert to light mode colors
+                    panel.setBackground(Color.WHITE);
+                    diaryTextArea.setBackground(Color.WHITE);
+                    diaryTextArea.setForeground(Color.BLACK);
+                    // Revert other components' colors
+                }
+            }
+            private void insertEmoji(String emoji){
+            int caretPosition = diaryTextArea.getCaretPosition();
+            diaryTextArea.insert(emoji, caretPosition);
+
+            }
         }
-    }
-}
+
