@@ -27,6 +27,9 @@ class DiaryFrame extends JFrame {
     private JPanel panel;
     private Font customFont;
 
+    private JButton searchButton;
+    private JTextField searchField;
+
     public DiaryFrame(String diaryApp) {
         super(diaryApp);
 
@@ -67,6 +70,11 @@ class DiaryFrame extends JFrame {
         JButton tagButton = new JButton("Add Tag");
         tagButton.addActionListener(new AddTagButtonListener());
 
+        searchField = new JTextField(20);
+        searchButton = new JButton("Search");
+        searchButton.addActionListener(new SearchButtonListener());
+        buttonPanel.add(searchField);
+
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
@@ -75,6 +83,10 @@ class DiaryFrame extends JFrame {
         buttonPanel.add(nextButton);
         buttonPanel.add(emojiButton);
         buttonPanel.add(tagButton);
+
+        buttonPanel.add(searchField);
+        buttonPanel.add(searchButton);
+
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -142,6 +154,27 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    private class SearchButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            searchEntries(searchField.getText());
+        }
+    }
+
+    private void searchEntries(String searchText){
+        diaryTextArea.setSelectionStart(0);
+        diaryTextArea.setSelectionEnd(0);
+
+        String text = diaryTextArea.getText();
+        int index = text.indexOf(searchText);
+
+        if (index >= 0){
+            diaryTextArea.setSelectionStart(index);
+            diaryTextArea.setSelectionEnd(index + searchText.length());
+        } else {
+            JOptionPane.showMessageDialog(this, "Text not found", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
     private void saveDiaryEntry() {
         String entry = diaryTextArea.getText();
