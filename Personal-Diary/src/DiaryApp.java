@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 
 public class DiaryApp {
     public static void main(String[] args) {
@@ -30,6 +34,14 @@ class DiaryFrame extends JFrame {
     private JButton searchButton;
     private JTextField searchField;
 
+    // Stack to store undo and redo operations
+    private Stack<String> undoStack;
+    private Stack<String> redoStack;
+
+    private JButton undoButton;
+    private JButton redoButton;
+
+
     public DiaryFrame(String diaryApp) {
         super(diaryApp);
 
@@ -44,6 +56,7 @@ class DiaryFrame extends JFrame {
         diaryTextArea.setFont(customFont);
 
         JScrollPane scrollPane = new JScrollPane(diaryTextArea);
+
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
@@ -73,7 +86,18 @@ class DiaryFrame extends JFrame {
         searchField = new JTextField(20);
         searchButton = new JButton("Search");
         searchButton.addActionListener(new SearchButtonListener());
-        buttonPanel.add(searchField);
+
+        // Initialize the undo and redo stacks
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
+
+        undoButton = new JButton("Undo");
+        undoButton.addActionListener(new UndoButtonListener());
+        undoButton.setEnabled(true);
+
+        redoButton = new JButton("Redo");
+        redoButton.addActionListener(new RedoButtonListener());
+        redoButton.setEnabled(true);
 
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
@@ -83,10 +107,11 @@ class DiaryFrame extends JFrame {
         buttonPanel.add(nextButton);
         buttonPanel.add(emojiButton);
         buttonPanel.add(tagButton);
+        buttonPanel.add(undoButton);
+        buttonPanel.add(redoButton);
 
         buttonPanel.add(searchField);
         buttonPanel.add(searchButton);
-
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -157,23 +182,65 @@ class DiaryFrame extends JFrame {
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            searchEntries(searchField.getText());
+            performSearch();
         }
     }
 
-    private void searchEntries(String searchText){
-        diaryTextArea.setSelectionStart(0);
-        diaryTextArea.setSelectionEnd(0);
-
-        String text = diaryTextArea.getText();
-        int index = text.indexOf(searchText);
-
-        if (index >= 0){
-            diaryTextArea.setSelectionStart(index);
-            diaryTextArea.setSelectionEnd(index + searchText.length());
-        } else {
-            JOptionPane.showMessageDialog(this, "Text not found", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+    private class UndoButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            undo();
         }
+    }
+
+    private class RedoButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            redo();
+        }
+    }
+
+    // Perform the search operation
+    private void performSearch() {
+        String searchText = searchField.getText();
+        if (searchText.isEmpty()) {
+            clearHighlights();
+            return;
+        }
+
+        String text = diaryTextArea.getText().toLowerCase();
+        searchText = searchText.toLowerCase();
+
+        int index = text.indexOf(searchText);
+        if (index >= 0) {
+            clearHighlights();
+        }
+
+        while (index >= 0) {
+            try {
+                int endIndex = index + searchText.length();
+                highlightText(index, endIndex);
+                index = text.indexOf(searchText, endIndex);
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Clear highlights in the text
+    private void clearHighlights() {
+        Highlighter highlighter = diaryTextArea.getHighlighter();
+        Highlighter.Highlight[] highlights = highlighter.getHighlights();
+        for (Highlighter.Highlight highlight : highlights) {
+            highlighter.removeHighlight(highlight);
+        }
+    }
+
+    // Highlight text in the text area
+    private void highlightText(int startIndex, int endIndex) throws BadLocationException {
+        DefaultHighlighter highlighter = (DefaultHighlighter) diaryTextArea.getHighlighter();
+        DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+        highlighter.addHighlight(startIndex, endIndex, highlightPainter);
     }
 
     private void saveDiaryEntry() {
@@ -183,6 +250,11 @@ class DiaryFrame extends JFrame {
             diaryEntries.add("Date/Time: " + timestamp + "\n" + entry);
             currentEntryIndex = diaryEntries.size() - 1;
             diaryTextArea.setText("");
+
+            undoStack.clear(); // Clear undo stack when a new entry is saved
+            redoStack.clear(); // Clear redo stack
+
+            updateButtons(); // Disable undo and redo buttons
             JOptionPane.showMessageDialog(this, "Entry saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Please enter an entry before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -194,8 +266,14 @@ class DiaryFrame extends JFrame {
         if (!entry.trim().isEmpty() && currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             String editedEntry = "Date/Time: " + timestamp + "\n" + entry;
+            String previousEntry = diaryEntries.get(currentEntryIndex);
             diaryEntries.set(currentEntryIndex, editedEntry);
             diaryTextArea.setText(editedEntry); // Update the displayed text
+
+            undoStack.push(previousEntry); // Push the previous entry to the undo stack
+            clearRedoStack(); // Clear redo stack
+            updateButtons(); // Enable undo button, disable redo button
+
             JOptionPane.showMessageDialog(this, "Entry edited successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Please select an entry to edit.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -204,15 +282,23 @@ class DiaryFrame extends JFrame {
 
     private void deleteDiaryEntry() {
         if (currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
+            String deletedEntry = diaryEntries.get(currentEntryIndex);
             diaryEntries.remove(currentEntryIndex);
+            clearHighlights(); // Clear highlights when an entry is deleted
             if (diaryEntries.isEmpty()) {
                 diaryTextArea.setText("");
+                undoStack.clear(); // Clear undo stack when all entries are deleted
+                redoStack.clear(); // Clear redo stack
+                updateButtons(); // Disable undo and redo buttons
             } else {
                 if (currentEntryIndex >= diaryEntries.size()) {
                     currentEntryIndex = diaryEntries.size() - 1;
                 }
                 diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
             }
+            undoStack.push(deletedEntry); // Push the deleted entry to the undo stack
+            clearRedoStack(); // Clear redo stack
+            updateButtons(); // Enable undo button, disable redo button
             JOptionPane.showMessageDialog(this, "Entry deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Please select an entry to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -221,15 +307,23 @@ class DiaryFrame extends JFrame {
 
     private void navigateToPreviousEntry() {
         if (currentEntryIndex > 0) {
+            if (isDirty()) {
+                saveEntryToUndoStack();
+            }
             currentEntryIndex--;
             diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+            updateButtons();
         }
     }
 
     private void navigateToNextEntry() {
         if (currentEntryIndex < diaryEntries.size() - 1) {
+            if (isDirty()) {
+                saveEntryToUndoStack();
+            }
             currentEntryIndex++;
             diaryTextArea.setText(diaryEntries.get(currentEntryIndex));
+            updateButtons();
         }
     }
 
@@ -255,7 +349,6 @@ class DiaryFrame extends JFrame {
     private void insertEmoji(String emoji) {
         int caretPosition = diaryTextArea.getCaretPosition();
         diaryTextArea.insert(emoji, caretPosition);
-
     }
 
     private void addTag() {
@@ -283,5 +376,48 @@ class DiaryFrame extends JFrame {
             return content;
         }
     }
-}
 
+    private boolean isDirty() {
+        String currentText = diaryTextArea.getText();
+        String previousEntry = diaryEntries.get(currentEntryIndex);
+        return !currentText.equals(previousEntry);
+    }
+
+    private void saveEntryToUndoStack() {
+        undoStack.push(diaryEntries.get(currentEntryIndex));
+    }
+
+    private void undo() {
+        if (!undoStack.isEmpty()) {
+            String currentText = diaryTextArea.getText();
+            redoStack.push(currentText); // Push the current text to the redo stack
+            String previousEntry = undoStack.pop(); // Pop the previous entry from the undo stack
+            diaryEntries.set(currentEntryIndex, previousEntry);
+            diaryTextArea.setText(previousEntry);
+            updateButtons();
+        }
+    }
+
+    private void redo() {
+        if (!redoStack.isEmpty()) {
+            String currentText = diaryTextArea.getText();
+            undoStack.push(currentText); // Push the current text to the undo stack
+            String nextEntry = redoStack.pop(); // Pop the next entry from the redo stack
+            diaryEntries.set(currentEntryIndex, nextEntry);
+            diaryTextArea.setText(nextEntry);
+            updateButtons();
+        }
+    }
+
+    private void clearRedoStack() {
+        redoStack.clear();
+    }
+
+    private void updateButtons() {
+        // Enable or disable undo and redo buttons
+        boolean canUndo = !undoStack.isEmpty();
+        boolean canRedo = !redoStack.isEmpty();
+        undoButton.setEnabled(canUndo);
+        redoButton.setEnabled(canRedo);
+    }
+}
