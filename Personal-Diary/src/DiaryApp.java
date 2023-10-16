@@ -5,11 +5,10 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Stack;
 
 public class DiaryApp {
     public static void main(String[] args) {
@@ -33,6 +32,7 @@ class DiaryFrame extends JFrame {
 
     private JButton searchButton;
     private JTextField searchField;
+    private JLabel wordCountLabel;
 
     // Stack to store undo and redo operations
     private Stack<String> undoStack;
@@ -55,8 +55,25 @@ class DiaryFrame extends JFrame {
         diaryTextArea.setWrapStyleWord(true);
         diaryTextArea.setFont(customFont);
 
-        JScrollPane scrollPane = new JScrollPane(diaryTextArea);
+        // Added a DocumentListener to update word count in real-time
+        diaryTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateWordCount();
+            }
 
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateWordCount();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateWordCount();
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(diaryTextArea);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
@@ -99,6 +116,8 @@ class DiaryFrame extends JFrame {
         redoButton.addActionListener(new RedoButtonListener());
         redoButton.setEnabled(true);
 
+        wordCountLabel = new JLabel("Word Count: 0");
+
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
@@ -112,6 +131,7 @@ class DiaryFrame extends JFrame {
 
         buttonPanel.add(searchField);
         buttonPanel.add(searchButton);
+        buttonPanel.add(wordCountLabel);
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -269,7 +289,6 @@ class DiaryFrame extends JFrame {
             String previousEntry = diaryEntries.get(currentEntryIndex);
             diaryEntries.set(currentEntryIndex, editedEntry);
             diaryTextArea.setText(editedEntry); // Update the displayed text
-
             undoStack.push(previousEntry); // Push the previous entry to the undo stack
             clearRedoStack(); // Clear redo stack
             updateButtons(); // Enable undo button, disable redo button
@@ -278,6 +297,35 @@ class DiaryFrame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Please select an entry to edit.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    // code for word count
+    private void updateWordCount() {
+        String text = diaryTextArea.getText();
+        int wordCount = countWords(text);
+        wordCountLabel.setText("Word Count: " + wordCount);
+    }
+
+    private int countWords(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+
+        BreakIterator breakIterator = BreakIterator.getWordInstance();
+        breakIterator.setText(text);
+
+        int wordCount = 0;
+        int lastIndex = 0;
+
+        while (breakIterator.next() != BreakIterator.DONE) {
+            String word = text.substring(lastIndex, breakIterator.current());
+            if (Character.isLetterOrDigit(word.charAt(0))) {
+                wordCount++;
+            }
+            lastIndex = breakIterator.current();
+        }
+
+        return wordCount;
     }
 
     private void deleteDiaryEntry() {
@@ -421,3 +469,4 @@ class DiaryFrame extends JFrame {
         redoButton.setEnabled(canRedo);
     }
 }
+
