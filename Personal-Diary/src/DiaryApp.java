@@ -41,6 +41,9 @@ class DiaryFrame extends JFrame {
     private JButton undoButton;
     private JButton redoButton;
 
+    private Highlighter highlighter;
+    private Highlighter.HighlightPainter highlightPainter;
+
 
     public DiaryFrame(String diaryApp) {
         super(diaryApp);
@@ -72,6 +75,12 @@ class DiaryFrame extends JFrame {
                 updateWordCount();
             }
         });
+
+        // custom Highlighter
+        highlighter = new DefaultHighlighter();
+        diaryTextArea.setHighlighter(highlighter);
+
+        highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.DARK_GRAY);
 
         JScrollPane scrollPane = new JScrollPane(diaryTextArea);
 
@@ -237,31 +246,25 @@ class DiaryFrame extends JFrame {
         }
 
         while (index >= 0) {
-            try {
-                int endIndex = index + searchText.length();
-                highlightText(index, endIndex);
-                index = text.indexOf(searchText, endIndex);
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
+            int endIndex = index + searchText.length();
+            highlightText(index, endIndex);
+            index = text.indexOf(searchText, endIndex);
         }
     }
 
     // Clear highlights in the text
-    private void clearHighlights() {
-        Highlighter highlighter = diaryTextArea.getHighlighter();
-        Highlighter.Highlight[] highlights = highlighter.getHighlights();
-        for (Highlighter.Highlight highlight : highlights) {
-            highlighter.removeHighlight(highlight);
+    // Highlight text in the text area
+    private void highlightText(int startIndex, int endIndex) {
+        try {
+            highlighter.addHighlight(startIndex, endIndex, highlightPainter);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
         }
     }
-
-    // Highlight text in the text area
-    private void highlightText(int startIndex, int endIndex) throws BadLocationException {
-        DefaultHighlighter highlighter = (DefaultHighlighter) diaryTextArea.getHighlighter();
-        DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
-        highlighter.addHighlight(startIndex, endIndex, highlightPainter);
+    private void clearHighlights() {
+        highlighter.removeAllHighlights();
     }
+
 
     private void saveDiaryEntry() {
         String entry = diaryTextArea.getText();
