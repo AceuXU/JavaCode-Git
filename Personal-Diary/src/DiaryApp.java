@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
@@ -88,30 +89,51 @@ class DiaryFrame extends JFrame {
 
         JButton saveButton = new JButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
+        saveButton.setForeground(Color.white);
+        saveButton.setBackground(Color.darkGray);
+
 
         JButton editButton = new JButton("Edit Entry");
         editButton.addActionListener(new EditButtonListener());
+        editButton.setForeground(Color.white);
+        editButton.setBackground(Color.darkGray);
+
 
         JButton deleteButton = new JButton("Delete Entry");
         deleteButton.addActionListener(new DeleteButtonListener());
+        deleteButton.setForeground(Color.white);
+        deleteButton.setBackground(Color.darkGray);
 
         JButton prevButton = new JButton("Previous Entry");
         prevButton.addActionListener(new PrevButtonListener());
+        prevButton.setForeground(Color.white);
+        prevButton.setBackground(Color.darkGray);
 
         JButton nextButton = new JButton("Next Entry");
         nextButton.addActionListener(new NextButtonListener());
+        nextButton.setForeground(Color.white);
+        nextButton.setBackground(Color.darkGray);
 
         JButton darkModeButton = new JButton("Dark Mode");
         darkModeButton.addActionListener(new DarkModeButtonListener());
+        darkModeButton.setForeground(Color.white);
+        darkModeButton.setBackground(Color.darkGray);
 
         JButton emojiButton = new JButton("✔");
+        emojiButton.setForeground(Color.white);
+        emojiButton.setBackground(Color.darkGray);
 
         JButton tagButton = new JButton("Add Tag");
         tagButton.addActionListener(new AddTagButtonListener());
+        tagButton.setForeground(Color.white);
+        tagButton.setBackground(Color.darkGray);
 
         searchField = new JTextField(20);
         searchButton = new JButton("Search");
         searchButton.addActionListener(new SearchButtonListener());
+        searchButton.setForeground(Color.white);
+        searchButton.setBackground(Color.darkGray);
+
 
         // Initialize the undo and redo stacks
         undoStack = new Stack<>();
@@ -120,12 +142,18 @@ class DiaryFrame extends JFrame {
         undoButton = new JButton("Undo");
         undoButton.addActionListener(new UndoButtonListener());
         undoButton.setEnabled(true);
+        undoButton.setForeground(Color.white);
+        undoButton.setBackground(Color.darkGray);
+
 
         redoButton = new JButton("Redo");
         redoButton.addActionListener(new RedoButtonListener());
         redoButton.setEnabled(true);
+        redoButton.setForeground(Color.white);
+        redoButton.setBackground(Color.darkGray);
 
         wordCountLabel = new JLabel("Word Count: 0");
+        wordCountLabel.setBackground(Color.black);
 
         buttonPanel.add(saveButton);
         buttonPanel.add(editButton);
@@ -261,6 +289,7 @@ class DiaryFrame extends JFrame {
             e.printStackTrace();
         }
     }
+
     private void clearHighlights() {
         highlighter.removeAllHighlights();
     }
