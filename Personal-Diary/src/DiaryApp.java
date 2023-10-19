@@ -420,6 +420,12 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    private boolean isDirty() {
+        String currentText = diaryTextArea.getText();
+        String previousEntry = diaryEntries.get(currentEntryIndex);
+        return !currentText.equals(previousEntry);
+    }
+
     private void toggleDarkMode() {
         isDarkMode = !isDarkMode;
 
@@ -479,12 +485,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    private boolean isDirty() {
-        String currentText = diaryTextArea.getText();
-        String previousEntry = diaryEntries.get(currentEntryIndex);
-        return !currentText.equals(previousEntry);
-    }
-
+    // undo and redo methods -
     private void saveEntryToUndoStack() {
         undoStack.push(diaryEntries.get(currentEntryIndex));
     }
