@@ -1,5 +1,7 @@
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
@@ -10,6 +12,8 @@ import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+
+import static java.awt.SystemColor.text;
 
 public class DiaryApp {
     public static void main(String[] args) {
@@ -90,54 +94,54 @@ class DiaryFrame extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        JButton saveButton = new JButton("Save Entry");
+        JButton saveButton = createRoundedButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
         saveButton.setForeground(Color.white);
         saveButton.setBackground(Color.darkGray);
         saveButton.setFont(buttonFont);
 
-        JButton editButton = new JButton("Edit Entry");
+        JButton editButton = createRoundedButton("Edit Entry");
         editButton.addActionListener(new EditButtonListener());
         editButton.setForeground(Color.white);
         editButton.setBackground(Color.darkGray);
         editButton.setFont(buttonFont);
 
-        JButton deleteButton = new JButton("Delete Entry");
+        JButton deleteButton = createRoundedButton("Delete Entry");
         deleteButton.addActionListener(new DeleteButtonListener());
         deleteButton.setForeground(Color.white);
         deleteButton.setBackground(Color.darkGray);
         deleteButton.setFont(buttonFont);
 
-        JButton prevButton = new JButton("Previous Entry");
+        JButton prevButton = createRoundedButton("Previous Entry");
         prevButton.addActionListener(new PrevButtonListener());
         prevButton.setForeground(Color.white);
         prevButton.setBackground(Color.darkGray);
         prevButton.setFont(buttonFont);
 
-        JButton nextButton = new JButton("Next Entry");
+        JButton nextButton = createRoundedButton("Next Entry");
         nextButton.addActionListener(new NextButtonListener());
         nextButton.setForeground(Color.white);
         nextButton.setBackground(Color.darkGray);
         nextButton.setFont(buttonFont);
 
-        JButton darkModeButton = new JButton("Dark Mode");
+        JButton darkModeButton = createRoundedButton("Dark Mode");
         darkModeButton.addActionListener(new DarkModeButtonListener());
         darkModeButton.setForeground(Color.white);
         darkModeButton.setBackground(Color.darkGray);
         darkModeButton.setFont(buttonFont);
 
-        JButton emojiButton = new JButton("✔");
+        JButton emojiButton = createRoundedButton("✔");
         emojiButton.setForeground(Color.white);
         emojiButton.setBackground(Color.darkGray);
 
-        JButton tagButton = new JButton("Add Tag");
+        JButton tagButton = createRoundedButton("Add Tag");
         tagButton.addActionListener(new AddTagButtonListener());
         tagButton.setForeground(Color.white);
         tagButton.setBackground(Color.darkGray);
         tagButton.setFont(buttonFont);
 
         searchField = new JTextField(20);
-        searchButton = new JButton("Search");
+        searchButton = createRoundedButton("Search");
         searchButton.addActionListener(new SearchButtonListener());
         searchButton.setForeground(Color.white);
         searchButton.setBackground(Color.darkGray);
@@ -147,14 +151,14 @@ class DiaryFrame extends JFrame {
         undoStack = new Stack<>();
         redoStack = new Stack<>();
 
-        undoButton = new JButton("Undo");
+        undoButton = createRoundedButton("Undo");
         undoButton.addActionListener(new UndoButtonListener());
         undoButton.setEnabled(true);
         undoButton.setForeground(Color.white);
         undoButton.setBackground(Color.darkGray);
         undoButton.setFont(buttonFont);
 
-        redoButton = new JButton("Redo");
+        redoButton = createRoundedButton("Redo");
         redoButton.addActionListener(new RedoButtonListener());
         redoButton.setEnabled(true);
         redoButton.setForeground(Color.white);
@@ -445,6 +449,15 @@ class DiaryFrame extends JFrame {
         if (tag != null && !tag.trim().isEmpty()) {
             diaryTextArea.insert("[" + tag + "]", diaryTextArea.getCaretPosition());
         }
+    }
+
+    // Method to create a rounded button
+    private JButton createRoundedButton(String text) {
+        JButton button = new JButton(text);
+        Border roundedBorder = new EmptyBorder(5, 10, 5, 10); // You can adjust the padding
+        button.setBorder(roundedBorder);
+        button.setFocusable(false);
+        return button;
     }
 
     // Inner class to represent a diary entry with a tag and content
