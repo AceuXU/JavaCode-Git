@@ -8,12 +8,12 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-
-import static java.awt.SystemColor.text;
 
 public class DiaryApp {
     public static void main(String[] args) {
@@ -89,6 +89,99 @@ class DiaryFrame extends JFrame {
         diaryTextArea.setHighlighter(highlighter);
 
         highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.DARK_GRAY);
+
+        // Action object for common actions
+        Action saveAction = new AbstractAction("Save Entry") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveDiaryEntry();
+            }
+        };
+
+        Action undoAction = new AbstractAction("Undo") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                undo();
+            }
+        };
+        Action redoAction = new AbstractAction("Redo") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                redo();
+            }
+        };
+
+        // keyboard shortcuts for the actions
+        saveAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+        saveAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+
+        undoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Z);
+        undoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+
+        redoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Y);
+        redoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+
+        JMenuItem saveMenuItem = new JMenuItem(saveAction);
+        JMenuItem undoMenuItem = new JMenuItem(undoAction);
+        JMenuItem redoMenuItem = new JMenuItem(redoAction);
+
+        // menu and add menu items
+        JMenu fileMenu = new JMenu("File");
+        JMenu editMenu = new JMenu("Edit");
+
+        fileMenu.add(saveMenuItem);
+        fileMenu.add(undoMenuItem);
+        fileMenu.add(redoMenuItem);
+
+        // some action menu and shortcuts below -
+
+        // Add to your DiaryFrame constructor
+        JMenuItem newEntryMenuItem = new JMenuItem("New Entry");
+        newEntryMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        newEntryMenuItem.addActionListener(e -> createNewEntry());
+        fileMenu.add(newEntryMenuItem);
+
+        JMenuItem cutMenuItem = new JMenuItem("Cut");
+        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        cutMenuItem.addActionListener(e -> diaryTextArea.cut());
+        editMenu.add(cutMenuItem);
+
+        JMenuItem copyMenuItem = new JMenuItem("Copy");
+        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        copyMenuItem.addActionListener(e -> diaryTextArea.copy());
+        editMenu.add(copyMenuItem);
+
+        JMenuItem pasteMenuItem = new JMenuItem("Paste");
+        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        pasteMenuItem.addActionListener(e -> diaryTextArea.paste());
+        editMenu.add(pasteMenuItem);
+
+        // Add to your DiaryFrame constructor
+        JMenuItem deleteEntryMenuItem = new JMenuItem("Delete Entry");
+        deleteEntryMenuItem.addActionListener(e -> deleteDiaryEntry());
+        editMenu.add(deleteEntryMenuItem);
+
+        // Add to your DiaryFrame constructor
+        JMenuItem searchMenuItem = new JMenuItem("Search");
+        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        searchMenuItem.addActionListener(e -> performSearch());
+        editMenu.add(searchMenuItem);
+
+        // Add to your DiaryFrame constructor
+        JMenuItem exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
+        exitMenuItem.addActionListener(e -> System.exit(0));
+        fileMenu.add(exitMenuItem);
+
+
+        // menu bar and add the menu
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+
+        setJMenuBar(menuBar);
+
+        // ScrollPane and Buttons
 
         JScrollPane scrollPane = new JScrollPane(diaryTextArea);
 
@@ -191,6 +284,25 @@ class DiaryFrame extends JFrame {
         isDarkMode = false;
 
         this.add(panel);
+    }
+
+    private void createNewEntry() {
+// Check if there are unsaved changes before creating a new entry
+        if (isDirty()) {
+            int choice = JOptionPane.showConfirmDialog(this, "Do you want to save the current entry?", "Save Entry", JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                // Save the current entry
+                saveDiaryEntry();
+            } else if (choice == JOptionPane.CANCEL_OPTION) {
+                // User canceled creating a new entry
+                return;
+            }
+            // If choice is NO_OPTION, proceed to create a new entry
+        }
+
+        // Clear the text area to create a new entry
+        diaryTextArea.setText("");
     }
 
     private class SaveButtonListener implements ActionListener {
