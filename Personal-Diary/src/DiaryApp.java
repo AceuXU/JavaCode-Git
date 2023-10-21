@@ -134,8 +134,6 @@ class DiaryFrame extends JFrame {
         fileMenu.add(redoMenuItem);
 
         // some action menu and shortcuts below -
-
-        // Add to your DiaryFrame constructor
         JMenuItem newEntryMenuItem = new JMenuItem("New Entry");
         newEntryMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         newEntryMenuItem.addActionListener(e -> createNewEntry());
@@ -156,25 +154,21 @@ class DiaryFrame extends JFrame {
         pasteMenuItem.addActionListener(e -> diaryTextArea.paste());
         editMenu.add(pasteMenuItem);
 
-        // Add to your DiaryFrame constructor
         JMenuItem deleteEntryMenuItem = new JMenuItem("Delete Entry");
         deleteEntryMenuItem.addActionListener(e -> deleteDiaryEntry());
         editMenu.add(deleteEntryMenuItem);
 
-        // Add to your DiaryFrame constructor
         JMenuItem searchMenuItem = new JMenuItem("Search");
         searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         searchMenuItem.addActionListener(e -> performSearch());
         editMenu.add(searchMenuItem);
 
-        // Add to your DiaryFrame constructor
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
         exitMenuItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitMenuItem);
 
-
-        // menu bar and add the menu
+        // menu bar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
@@ -187,47 +181,47 @@ class DiaryFrame extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        JButton saveButton = createRoundedButton("Save Entry");
+        JButton saveButton = new JButton("Save Entry");
         saveButton.addActionListener(new SaveButtonListener());
         saveButton.setForeground(Color.white);
         saveButton.setBackground(Color.darkGray);
         saveButton.setFont(buttonFont);
 
-        JButton editButton = createRoundedButton("Edit Entry");
+        JButton editButton = new JButton("Edit Entry");
         editButton.addActionListener(new EditButtonListener());
         editButton.setForeground(Color.white);
         editButton.setBackground(Color.darkGray);
         editButton.setFont(buttonFont);
 
-        JButton deleteButton = createRoundedButton("Delete Entry");
+        JButton deleteButton = new JButton("Delete Entry");
         deleteButton.addActionListener(new DeleteButtonListener());
         deleteButton.setForeground(Color.white);
         deleteButton.setBackground(Color.darkGray);
         deleteButton.setFont(buttonFont);
 
-        JButton prevButton = createRoundedButton("Previous Entry");
+        JButton prevButton = new JButton("Previous Entry");
         prevButton.addActionListener(new PrevButtonListener());
         prevButton.setForeground(Color.white);
         prevButton.setBackground(Color.darkGray);
         prevButton.setFont(buttonFont);
 
-        JButton nextButton = createRoundedButton("Next Entry");
+        JButton nextButton = new JButton("Next Entry");
         nextButton.addActionListener(new NextButtonListener());
         nextButton.setForeground(Color.white);
         nextButton.setBackground(Color.darkGray);
         nextButton.setFont(buttonFont);
 
-        JButton darkModeButton = createRoundedButton("Dark Mode");
+        JButton darkModeButton = new JButton("Dark Mode");
         darkModeButton.addActionListener(new DarkModeButtonListener());
         darkModeButton.setForeground(Color.white);
         darkModeButton.setBackground(Color.darkGray);
         darkModeButton.setFont(buttonFont);
 
-        JButton emojiButton = createRoundedButton("✔");
+        JButton emojiButton = new JButton("✔");
         emojiButton.setForeground(Color.white);
         emojiButton.setBackground(Color.darkGray);
 
-        JButton tagButton = createRoundedButton("Add Tag");
+        JButton tagButton = new JButton("Add Tag");
         tagButton.addActionListener(new AddTagButtonListener());
         tagButton.setForeground(Color.white);
         tagButton.setBackground(Color.darkGray);
@@ -244,14 +238,14 @@ class DiaryFrame extends JFrame {
         undoStack = new Stack<>();
         redoStack = new Stack<>();
 
-        undoButton = createRoundedButton("Undo");
+        undoButton = new JButton("Undo");
         undoButton.addActionListener(new UndoButtonListener());
         undoButton.setEnabled(true);
         undoButton.setForeground(Color.white);
         undoButton.setBackground(Color.darkGray);
         undoButton.setFont(buttonFont);
 
-        redoButton = createRoundedButton("Redo");
+        redoButton = new JButton("Redo");
         redoButton.addActionListener(new RedoButtonListener());
         redoButton.setEnabled(true);
         redoButton.setForeground(Color.white);
@@ -287,24 +281,21 @@ class DiaryFrame extends JFrame {
     }
 
     private void createNewEntry() {
-// Check if there are unsaved changes before creating a new entry
+        // Check if there are unsaved changes before creating a new entry
         if (isDirty()) {
             int choice = JOptionPane.showConfirmDialog(this, "Do you want to save the current entry?", "Save Entry", JOptionPane.YES_NO_CANCEL_OPTION);
 
             if (choice == JOptionPane.YES_OPTION) {
-                // Save the current entry
                 saveDiaryEntry();
             } else if (choice == JOptionPane.CANCEL_OPTION) {
-                // User canceled creating a new entry
                 return;
             }
-            // If choice is NO_OPTION, proceed to create a new entry
         }
-
         // Clear the text area to create a new entry
         diaryTextArea.setText("");
     }
 
+    // ActionListener -
     private class SaveButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -382,6 +373,8 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    // Methods below -
+
     // Perform the search operation
     private void performSearch() {
         String searchText = searchField.getText();
@@ -405,7 +398,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    // Clear highlights in the text
+
     // Highlight text in the text area
     private void highlightText(int startIndex, int endIndex) {
         try {
@@ -415,11 +408,12 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    // Clear highlights in the text-
     private void clearHighlights() {
         highlighter.removeAllHighlights();
     }
 
-
+    // method for saving entry-
     private void saveDiaryEntry() {
         String entry = diaryTextArea.getText();
         if (!entry.trim().isEmpty()) {
@@ -438,6 +432,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    // method for editing entry-
     private void editDiaryEntry() {
         String entry = diaryTextArea.getText();
         if (!entry.trim().isEmpty() && currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
@@ -456,7 +451,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    // code for word count
+    // code for word count-
     private void updateWordCount() {
         String text = diaryTextArea.getText();
         int wordCount = countWords(text);
@@ -485,6 +480,7 @@ class DiaryFrame extends JFrame {
         return wordCount;
     }
 
+    // method for deleting the entry-
     private void deleteDiaryEntry() {
         if (currentEntryIndex >= 0 && currentEntryIndex < diaryEntries.size()) {
             String deletedEntry = diaryEntries.get(currentEntryIndex);
@@ -510,6 +506,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
+    // code for navigate to next and previous entry-
     private void navigateToPreviousEntry() {
         if (currentEntryIndex > 0) {
             if (isDirty()) {
@@ -538,30 +535,30 @@ class DiaryFrame extends JFrame {
         return !currentText.equals(previousEntry);
     }
 
+    // code for dark mode -
     private void toggleDarkMode() {
         isDarkMode = !isDarkMode;
 
         if (isDarkMode) {
-            // Set dark mode colors
+            // dark mode colors
             panel.setBackground(Color.BLACK);
             diaryTextArea.setBackground(Color.DARK_GRAY);
             diaryTextArea.setForeground(Color.WHITE);
-            // Set other components' colors accordingly
-            // You can also change button colors, text colors, etc.
         } else {
             // Revert to light mode colors
             panel.setBackground(Color.WHITE);
             diaryTextArea.setBackground(Color.WHITE);
             diaryTextArea.setForeground(Color.BLACK);
-            // Revert other components' colors
         }
     }
 
+    // code for adding emoji-
     private void insertEmoji(String emoji) {
         int caretPosition = diaryTextArea.getCaretPosition();
         diaryTextArea.insert(emoji, caretPosition);
     }
 
+    // code for attaching tag-
     private void addTag() {
         String tag = JOptionPane.showInputDialog("Enter a tag:");
         if (tag != null && !tag.trim().isEmpty()) {
@@ -569,16 +566,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    // Method to create a rounded button
-    private JButton createRoundedButton(String text) {
-        JButton button = new JButton(text);
-        Border roundedBorder = new EmptyBorder(5, 10, 5, 10); // You can adjust the padding
-        button.setBorder(roundedBorder);
-        button.setFocusable(false);
-        return button;
-    }
-
-    // Inner class to represent a diary entry with a tag and content
+    // Inner class to represent a diary entry with a tag and content-
     private class DiaryEntry {
         private String tag;
         private String content;
@@ -597,7 +585,7 @@ class DiaryFrame extends JFrame {
         }
     }
 
-    // undo and redo methods -
+    // undo and redo methods-
     private void saveEntryToUndoStack() {
         undoStack.push(diaryEntries.get(currentEntryIndex));
     }
