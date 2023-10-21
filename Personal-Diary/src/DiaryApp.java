@@ -228,7 +228,7 @@ class DiaryFrame extends JFrame {
         tagButton.setFont(buttonFont);
 
         searchField = new JTextField(20);
-        searchButton = createRoundedButton("Search");
+        searchButton = new JButton("Search");
         searchButton.addActionListener(new SearchButtonListener());
         searchButton.setForeground(Color.white);
         searchButton.setBackground(Color.darkGray);
