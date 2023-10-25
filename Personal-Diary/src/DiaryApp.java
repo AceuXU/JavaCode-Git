@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -217,6 +218,12 @@ class DiaryFrame extends JFrame {
         darkModeButton.setBackground(Color.darkGray);
         darkModeButton.setFont(buttonFont);
 
+        JButton attachImageButton = new JButton("Attach Image");
+        attachImageButton.addActionListener(new AttachImageButtonListener());
+        attachImageButton.setForeground(Color.white);
+        attachImageButton.setBackground(Color.darkGray);
+        attachImageButton.setFont(buttonFont);
+
         JButton emojiButton = new JButton("✔");
         emojiButton.setForeground(Color.white);
         emojiButton.setBackground(Color.darkGray);
@@ -262,6 +269,7 @@ class DiaryFrame extends JFrame {
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(emojiButton);
+        buttonPanel.add(attachImageButton);
         buttonPanel.add(tagButton);
         buttonPanel.add(undoButton);
         buttonPanel.add(redoButton);
@@ -374,6 +382,21 @@ class DiaryFrame extends JFrame {
     }
 
     // Methods below -
+
+    // method for adding image-
+    class AttachImageButtonListener implements ActionListener{
+        public void actionPerformed(ActionEvent e){
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+
+            if (returnValue == JFileChooser.APPROVE_OPTION){
+                File selectedFile = fileChooser.getSelectedFile();
+                // Handle the selected image file (e.g., copy it to a folder and store the path in your diary entry)
+                String imagePath = ((File) selectedFile).getAbsolutePath();
+                diaryTextArea.append("\n[Image: " + imagePath + "]");
+            }
+        }
+    }
 
     // Perform the search operation
     private void performSearch() {
