@@ -7,17 +7,18 @@ public class Main {
         String replace = "newText";
 
         File directory = new File(directoryPath);
+        FileRenamerGUI renamerGUI;
 
-        if(directory.exists() && directory.isDirectory()){
+        if (directory.exists() && directory.isDirectory()) {
             File[] files = directory.listFiles();
 
-            for(File file : files){
+            for (File file : files) {
                 String oldName = file.getName();
                 String newName = oldName.replace(search, replace);
 
                 File newFile = new File(directory, newName);
 
-                if(file.renameTo(newFile)){
+                if (file.renameTo(newFile)) {
                     System.out.println("Renamed: " + oldName + " to " + newName);
                 } else {
                     System.out.println("Error renaming: " + oldName);
