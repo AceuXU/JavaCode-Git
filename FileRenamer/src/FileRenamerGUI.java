@@ -10,24 +10,57 @@ public class FileRenamerGUI extends JFrame {
 
     public FileRenamerGUI() {
         setTitle("File Renamer");
-        setSize(400, 200);
+        setSize(750, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
+        setLocationRelativeTo(null);
 
-        add(new JLabel("Directory Path: "));
-        directoryField = new JTextField();
-        add(directoryField);
 
-        add(new JLabel("Search Text:"));
-        searchField = new JTextField();
-        add(searchField);
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10);
 
-        add(new JLabel("Replace Text :"));
-        replaceField = new JTextField();
-        add(replaceField);
+        // Create labels and text fields
+        JLabel directoryLabel = new JLabel("Directory Path:");
+        directoryField = new JTextField(20);
+        JLabel searchLabel = new JLabel("Search Text:");
+        searchField = new JTextField(20);
+        JLabel replaceLabel = new JLabel("Replace Text:");
+        replaceField = new JTextField(20);
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        mainPanel.add(directoryLabel, gbc);
+        gbc.gridx = 1;
+        mainPanel.add(directoryField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        mainPanel.add(searchLabel, gbc);
+        gbc.gridx = 1;
+        mainPanel.add(searchField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        mainPanel.add(replaceLabel, gbc);
+        gbc.gridx = 1;
+        mainPanel.add(replaceField, gbc);
+
+        // Create button
         JButton renameButton = new JButton("Rename Files");
-        add(renameButton);
+
+        // Create a panel for the button
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(renameButton);
+
+        // Add components to the main panel
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        mainPanel.add(buttonPanel, gbc);
+
+        // Add the main panel to the frame
+        add(mainPanel, BorderLayout.CENTER);
 
         renameButton.addActionListener(new ActionListener() {
             @Override
