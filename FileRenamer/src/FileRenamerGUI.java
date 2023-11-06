@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -10,24 +12,39 @@ public class FileRenamerGUI extends JFrame {
 
     public FileRenamerGUI() {
         setTitle("File Renamer");
-        setSize(750, 750);
+        setSize(550, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(4, 2));
+        setLayout(new BorderLayout());
         setLocationRelativeTo(null);
+        setFocusable(false);
 
+        Color darkMode = new Color(25, 25, 25);
+
+        Color lightText = new Color(235, 245, 245);
+
+        getContentPane().setBackground(darkMode);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Create labels and text fields
         JLabel directoryLabel = new JLabel("Directory Path:");
         directoryField = new JTextField(20);
+        directoryLabel.setForeground(lightText);
+
         JLabel searchLabel = new JLabel("Search Text:");
         searchField = new JTextField(20);
+        directoryLabel.setBackground(darkMode);
+        searchLabel.setBackground(darkMode);
+        searchLabel.setForeground(lightText);
+
         JLabel replaceLabel = new JLabel("Replace Text:");
         replaceField = new JTextField(20);
+        directoryLabel.setForeground(lightText);
+        replaceLabel.setBackground(darkMode);
+        replaceLabel.setForeground(lightText);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -47,6 +64,9 @@ public class FileRenamerGUI extends JFrame {
 
         // Create button
         JButton renameButton = new JButton("Rename Files");
+        renameButton.setBackground(Color.BLACK);
+        renameButton.setForeground(Color.WHITE);
+
 
         // Create a panel for the button
         JPanel buttonPanel = new JPanel();
@@ -57,17 +77,13 @@ public class FileRenamerGUI extends JFrame {
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(10, 10, 10, 10);
+
         mainPanel.add(buttonPanel, gbc);
+        mainPanel.setBackground(darkMode);
 
         // Add the main panel to the frame
         add(mainPanel, BorderLayout.CENTER);
 
-        renameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                renameFiles();
-            }
-        });
     }
 
     private void renameFiles() {
